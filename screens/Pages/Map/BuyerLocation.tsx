@@ -6,8 +6,8 @@ import tw from "twrnc";
 export default function BuyerLocation() {
 	const imageURL = "https://cdn-icons-png.flaticon.com/512/1673/1673221.png";
 	const [mapRegion, setmapRegion] = useState({
-		latitude: 14.169912,
-		longitude: 121.244063,
+		latitude: 14.1868461,
+		longitude: 121.2318064,
 		latitudeDelta: 0.0012,
 		longitudeDelta: 0.0011,
 	});
