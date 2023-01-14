@@ -29,13 +29,45 @@ export type RootStackParamList = {
 	Login: undefined;
 	SignUp: undefined;
 	ProductDetail: undefined;
-	SellNow: undefined;
-	BuyerConfirmation: undefined;
+	SellNow: | Partial<{
+		itemId: number;
+		itemName: string;
+		listOfCategory: string;
+		itemSelectedImage: string;
+		minKg: number;
+		itemDealPrice: number;
+		itemUsername: string;
+		itemAddress: string;
+		itemProductDesc: string;
+		itemFirstName: string;
+		itemLastName: string;
+	  }>
+	| undefined;
+	BuyerConfirmation: | Partial<{
+		itemId: number;
+		itemName: string;
+		listOfCategory: string;
+		itemSelectedImage: string;
+		minKg: number;
+		itemDealPrice: number;
+		itemUsername: string;
+		itemAddress: string;
+		itemProductDesc: string;
+		itemFirstName: string;
+		itemLastName: string;
+	  }>
+	| undefined;
 	TransactionHistory: undefined;
 	ForgotPassword: undefined;
 	DealSeller: undefined;
 	ProductSell: undefined;
-	MapLocation: undefined;
+	MapLocation: | Partial<{
+		latitude: number;
+        longitude: number;
+        latitudeDelta: number;
+        longitudeDelta: number;
+		address: string;
+	}> | undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =

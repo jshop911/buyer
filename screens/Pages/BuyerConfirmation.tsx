@@ -14,7 +14,23 @@ import SellStatus from "../../assets/api/SellStatus";
 import { LogBox } from "react-native";
 LogBox.ignoreLogs(["Firebase Analytics is not available in the Expo client"]);
 
-export default function BuyerConfirmation({ navigation }) {
+export default function BuyerConfirmation({ navigation, route }) {
+	const {
+		itemId,
+		itemName,
+		itemSelectedImage,
+		minKg,
+		itemDealPrice,
+		itemUsername,
+		itemAddress,
+		itemProductDesc,
+		listOfCategory,
+		itemFirstName,
+		itemLastName,
+		itemStatus,
+	  } = route?.params || {};
+
+
 	return (
 		<>
 			<View style={tw`p-2`}>

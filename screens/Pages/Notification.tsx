@@ -5,6 +5,7 @@ import {
 	TouchableOpacity,
 	FlatList,
 	Alert,
+	Image
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Avatar } from "react-native-elements";
@@ -13,104 +14,91 @@ import React, { useEffect, useState } from "react";
 import tw from "twrnc";
 import NotificationData from "../../assets/api/NotificationData";
 import app, { db } from "../../config/firebase/Firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, serverTimestamp } from "firebase/firestore";
 
-export default function Notification({ navigation }) {
-	const [data, setData] = useState([]);
+export default function Notification({ navigation, route }) {
 
-	const [userName, setuserName] = useState("");
-	const [sellerID, setsellerID] = useState("");
-	const [photoURL, setPhotoURL] = useState("");
-	const [dealPrice, setDealPrice] = useState("");
-	const [minKg, setminKg] = useState("");
-	const [totalPrice, settotalPrice]  = useState("");
-	const [address, setAddress] = useState("");
-	const [dateCreated, setDateCreated] = useState([]);
+	// deal seller
+	const {
+		itemId,
+		itemName,
+		itemSelectedImage,
+		minKg,
+		itemDealPrice,
+		itemUsername,
+		itemAddress,
+		itemProductDesc,
+		listOfCategory,
+		itemFirstName,
+		itemLastName,
+		itemStatus,
+	  } = route?.params || {};
+
+	let currentUserUID = app.auth().currentUser.uid;
+	const [dealSeller, setDealSeller] = useState();
 	
 	 const getSellerDeal = async() => {
 		const getDataFromFirebase = [];
-		const querySnapshot = await getDocs(collection(db, "SellNow"));
+		const querySnapshot = await getDocs(collection(db, "placeSell"));
 		querySnapshot.forEach((doc) => {
 			getDataFromFirebase.push({ ...doc.data(), id: doc.id, key: doc.id });
 		
 		});
-		setData(getDataFromFirebase);
+		setDealSeller(getDataFromFirebase);
 	}
 
 	useEffect(() => {
 		getSellerDeal();
-	},[])
+	},[]);
 
 
-	// useEffect(() => {
-	// 	async function getSellerDeal() {
-	// 		try {
-	// 			let doc = await app
-	// 				.firestore()
-	// 				.collection("userSeller")
-	// 				.doc()
-	// 				.get();
+	const buyNow = async () => {
+		  const docRef = await addDoc(collection(db, "buyerAgree"), {
+			dateSell: serverTimestamp(),
+			statusMsg: "the buyer, confirmed. Please allow 20 mins for the buyer to arrive at your given address.",
+		  });
+		  console.log(docRef);
+		  Alert.alert("Thank you. The seller notified for your confirmation!");
+		  navigation.navigate("BuyConfirmation",{
+			itemId: itemId,
+			itemName: itemName,
+			itemDealPrice: itemDealPrice,
+			sellerFirstname: itemFirstName,
+			sellerLastname: itemLastName,
+			itemAddress: itemAddress,
+			minKg: minKg,
+			itemSelectedImage: itemSelectedImage,
+			
+		  })
+		
+	  };
 
-	// 			if (!doc.exists) {
-	// 				console.log("No user data found!");
-	// 			} else {
-	// 				let dataObj = doc.data();
-	// 				setuserName(dataObj.userName);
-	// 				setPhotoURL(dataObj.photoURL);
-	// 				setDealPrice(dataObj.dealPrice);
-	// 				setAddress(dataObj.address);
-	// 				setminKg(dataObj.minKg);
-	// 				settotalPrice(dataObj.totalPrice);
-	// 				setsellerID(dataObj.id);
-	// 			}
-	// 		} catch (err) {
-	// 			Alert.alert("There is an error.", err.message);
-	// 		}
-	// 	}
-	// 	getSellerDeal();
-	// 	getDisplayData();
-	//   }, []);
-	
-	// const getDisplayData = () => {
-	// 	const getDataFromFirebase = [];
-	// 	const sub = db
-	// 	  .collection("SellNow")
-	// 	  .where("sellerID", "==", "HWVg6DDBvCbF4xJU0iwO")
-	// 	  .onSnapshot((querySnapshot) => {
-	// 		querySnapshot.forEach((doc) => {
-	// 		  getDataFromFirebase.push({ ...doc.data(), id: doc.id, key: doc.id });
-	// 		});
-	// 		setData(getDataFromFirebase);
-	// 	  });
-	//   };
 
 	return (
 		<View style={tw`p-2`}>
 		<FlatList
-			data={data}
-			keyExtractor={(item) => item.key}
+			data={dealSeller}
+			keyExtractor={(item) => item.id}
 			renderItem={({ item }) => (
 				<View
 					style={tw`flex flex-row border-b border-gray-300 bg-gray-200 rounded mb-2`}
 				>
 					<View style={tw`p-2 self-center`}>
-						<Avatar
-							size={80}
-							rounded
-							title="P"
-							source={{
-								uri: item.profileImage,
-							}}
-						/>
+					<Image
+					style={tw`w-30 h-35 rounded px-2 border-solid border-2 border-gray-400`}
+					source={{
+					  uri: item.itemSelectedImage || "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
+					}}
+				  />
 					</View>
 					<View>
 						{/* For sellers name and time */}
 						<View style={tw`flex-row pt-4`}>
 							<View style={tw`w-50`}>
-								<Text style={tw`text-lg font-bold`}>{item.userName}</Text>
+								<Text style={tw`text-lg font-bold`}>{item.sellerFirstName}{item.sellerLastName}</Text>
 							</View>
 							<View>
-								<Text style={tw`text-xs text-gray-600`}>{item.dateCreated}</Text>
+								<Text style={tw`text-xs text-gray-600`}>{item.sellDate.toDate().toDateString()}</Text>
 							</View>
 						</View>
 						{/* For sellers name and time end */}
@@ -126,12 +114,12 @@ export default function Notification({ navigation }) {
 									<TouchableOpacity
 										onPress={() => navigation.navigate("MapLocation")}
 									>
-										<Text style={tw`text-sm w-55`}>{item.address}</Text>
+										<Text style={tw`text-sm w-55`}>{item.sellerAddress}</Text>
 									</TouchableOpacity>
 								</View>
 
 								<Text style={tw`text-base font-bold`}>{item.productName}</Text>
-								<Text>Deal Price: {item.dealPrice} Php</Text>
+								<Text>Deal Price: {item.itemDealPrice} Php</Text>
 								<View style={tw`flex-row `}>
 									<Text>Deal kg to buy: </Text>
 									<Text>{item.minKg} kg</Text>
@@ -139,7 +127,7 @@ export default function Notification({ navigation }) {
 								<View style={tw`flex-row `}>
 									<Text>Total:</Text>
 									<Text style={tw`text-red-500 font-bold pl-2`}>
-										{item.dealPrice * item.minKg} Php
+										{item.itemDealPrice * item.minKg} Php
 									</Text>
 								</View>
 							</View>
@@ -150,7 +138,7 @@ export default function Notification({ navigation }) {
 										icon="cart-arrow-down"
 										mode="contained"
 										color="#faac2a"
-										onPress={() => navigation.navigate("BuyerConfirmation")}
+										onPress={buyNow}
 									>
 										Buy now
 									</Button>

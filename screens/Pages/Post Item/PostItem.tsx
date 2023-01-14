@@ -13,25 +13,10 @@ LogBox.ignoreLogs(["Firebase Analytics is not available in the Expo client"]);
 
 export default function PostItem({ navigation }) {
 	const [data, setData] = useState();
-	const [formId, setFormId] = useState([]);
 	const user = getAuth();
 	
 	let currentUserUID = app.auth().currentUser.uid;
 
-    // useEffect(() => {
-    //     const unsubscribe = onSnapshot(nftCollectionRef,snapshot => {
-    //         setNFTS(snapshot.docs.map(doc => ({
-    //             id:doc.id,
-    //             data:doc.data()
-    //         })))
-    //     })
-    //     return () => {
-    //         unsubscribe()
-    //     }
-    // },[])
-
-	// Exporting Collection in easy/cleaner way
- 	// export const nftCollectionRef = collection(db,'nfts')
 
 	useEffect(() => {
 		getDisplayData()
@@ -51,49 +36,6 @@ export default function PostItem({ navigation }) {
 		});
 	};
 
-	// Code ng ibang tao
-	// const docRef = doc(db,'nfts',id)
-
-	// let pictureRef =  ref(storage,img)
-	// deleteObject(pictureRef)
-	//   .then(() => {
-	// 	setNFTS(nfts.filter((image) => image.data.img !== img));
-	//   })
-	//   .catch((error) => console.log(error));
-
-	// deleteDoc(docRef)
-	// .then(() => console.log("Deleted"))
-	// .catch((err) => console.log(err.message))
-
-
-	const handleDelete = async ({id}) => {
-		// const docRef = doc(db, "postedItem", "Fzugi05BxHNIYmuhJLaY"); // cannot read ng collection id
-		// const docRef = doc(db, "postedItem", id); // cannot read ng collection id
-
-		// deleteDoc(docRef)
-		// .then(() => {
-		// 	console.log(id)
-		// 	console.log("Entire Document has been deleted successfully.")
-		// 	// alert("Entire Document has been deleted successfully.");
-		// })
-		// .catch(error => {
-		// 	console.log(error);
-		// })
-		const dataRef = doc(db, "postedItem", id);
-		  try {
-			await deleteDoc(dataRef);
-			setData(data.filter((data) => data.id !== id));
-			console.log("Deleted successfully.");
-		  } catch (err) {
-			console.log(err);
-		  } 
-		
-		
-		
-		
-	};
-
-
 	return (
 		<View style={tw`mb-32`}>
 			<View style={tw`py-1 bg-[#faac2a] w-full`}>
@@ -107,7 +49,7 @@ export default function PostItem({ navigation }) {
 			<View style={tw`flex items-center self-center py-4 mb-18`}>
 				<FlatList
 					data={data}
-					keyExtractor={(item, index) => item.key}
+					keyExtractor={(item, index) => item.id}
 					numColumns={2}
 					renderItem={({ item}) => (
 						<View style={tw`flex-row p-2`}>
@@ -144,22 +86,6 @@ export default function PostItem({ navigation }) {
 									</Text>
 								</View>
 
-								
-								<View style={tw`self-end`}>	
-										<TouchableOpacity
-											onPress={() => handleDelete(item)}
-											// onPress={() => handleDelete(item._id)}
-											style={tw`self-center items-center`}
-										>
-										<MaterialCommunityIcons
-											name="delete"
-											size={20}
-											color="red"
-											style={tw`pr-2`}
-										/>
-										</TouchableOpacity>
-									</View>
-								
 							</View>
 						</View>
 					)}
