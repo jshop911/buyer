@@ -30,6 +30,8 @@ export default function BuyerConfirmation({ navigation, route }) {
 		itemStatus,
 	  } = route?.params || {};
 
+	  
+
 
 	return (
 		<>
@@ -37,22 +39,23 @@ export default function BuyerConfirmation({ navigation, route }) {
 				{/* Items to be sold */}
 				<FlatList
 					data={SellStatus}
-					keyExtractor={(item) => item.id}
+					keyExtractor={(item) => itemId}
 					renderItem={({ item }) => (
 						<>
 							<View style={tw`my-2 py-2 bg-gray-200 rounded flex-row`}>
 								<View style={tw`p-2`}>
 									<Image
+										style={tw`w-30 h-35 rounded px-2 border-solid border-2 border-gray-400`}
 										source={{
-											uri: item.productImage,
+										uri: itemSelectedImage || "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
 										}}
-										style={tw`w-22 h-30 p-2 rounded`}
 									/>
 								</View>
 								<View style={tw`pt-2 w-35 border-r border-gray-300`}>
-									<Text style={tw`text-base font-bold`}>{item.product}</Text>
+									<Text style={tw`text-base font-bold`}>{itemName}</Text>
 									<Text style={tw`text-[#223447] font-bold underline`}>
-										{item.username}
+										{itemFirstName} {itemLastName}
+
 									</Text>
 									<View style={tw`flex flex-row border-b border-gray-300 pb-2`}>
 										<MaterialCommunityIcons
@@ -63,7 +66,7 @@ export default function BuyerConfirmation({ navigation, route }) {
 										<TouchableOpacity
 											onPress={() => navigation.navigate("MapLocation")}
 										>
-											<Text style={tw`text-xs w-30`}>{item.location}</Text>
+											<Text style={tw`text-xs w-30`}>{itemAddress}</Text>
 										</TouchableOpacity>
 									</View>
 
@@ -72,7 +75,7 @@ export default function BuyerConfirmation({ navigation, route }) {
 											Deal Price:
 										</Text>
 										<Text style={tw`text-red-500 font-bold`}>
-											{item.price} Php / kg
+											{itemDealPrice} Php / kg
 										</Text>
 									</View>
 									<View style={tw`flex-row items-center`}>
@@ -81,7 +84,7 @@ export default function BuyerConfirmation({ navigation, route }) {
 										</Text>
 										<Text style={tw`text-sm text-gray-600 font-bold`}>
 											{" "}
-											{item.sold} kg
+											{minKg * itemDealPrice} kg
 										</Text>
 									</View>
 								</View>

@@ -14,29 +14,20 @@ import React, { useEffect, useState } from "react";
 import tw from "twrnc";
 import NotificationData from "../../assets/api/NotificationData";
 import app, { db } from "../../config/firebase/Firebase";
-import { addDoc, collection, doc, getDocs, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, Timestamp } from "firebase/firestore";
 
 export default function Notification({ navigation, route }) {
 
 	// deal seller
-	const {
-		itemId,
-		itemName,
-		itemSelectedImage,
-		minKg,
-		itemDealPrice,
-		itemUsername,
-		itemAddress,
-		itemProductDesc,
-		listOfCategory,
-		itemFirstName,
-		itemLastName,
-		itemStatus,
-	  } = route?.params || {};
 
 	let currentUserUID = app.auth().currentUser.uid;
 	const [dealSeller, setDealSeller] = useState();
 	
+	
+	useEffect(() => {
+		getSellerDeal();
+	},[]);
+
 	 const getSellerDeal = async() => {
 		const getDataFromFirebase = [];
 		const querySnapshot = await getDocs(collection(db, "placeSell"));
@@ -47,31 +38,59 @@ export default function Notification({ navigation, route }) {
 		setDealSeller(getDataFromFirebase);
 	}
 
-	useEffect(() => {
-		getSellerDeal();
-	},[]);
+
+	// const dealSellers = async() => {
+	// 	const docData = {
+	// 		itemId: id,
+	// 		itemName: itemName,
+	// 		itemDealPrice: itemDealPrice,
+	// 		sellerFirstname: itemFirstName,
+	// 		sellerLastname: itemLastName,
+	// 		itemAddress: itemAddress,
+	// 		minKg: minKg,
+	// 		dealDate: Timestamp,
+	// 		itemSelectedImage: itemSelectedImage,
+	// 	};
+	// 	await setDoc(doc(db, "buyerAgree"), docData);
+	// 	console.log(docData);
+	// 	Alert.alert("Thank you. The seller notified for your confirmation!");
+	// 	navigation.navigate("BuyerConfirmation")
+	
+	// }
 
 
-	const buyNow = async () => {
-		  const docRef = await addDoc(collection(db, "buyerAgree"), {
-			dateSell: serverTimestamp(),
-			statusMsg: "the buyer, confirmed. Please allow 20 mins for the buyer to arrive at your given address.",
-		  });
-		  console.log(docRef);
-		  Alert.alert("Thank you. The seller notified for your confirmation!");
-		  navigation.navigate("BuyConfirmation",{
-			itemId: itemId,
-			itemName: itemName,
-			itemDealPrice: itemDealPrice,
-			sellerFirstname: itemFirstName,
-			sellerLastname: itemLastName,
-			itemAddress: itemAddress,
-			minKg: minKg,
-			itemSelectedImage: itemSelectedImage,
-			
-		  })
+	// const buyNow = async () => {
+	// 	  const docRef = await addDoc(collection(db, "buyerAgree"), {
+	// 		dateSell: serverTimestamp(),
+	// 		statusMsg: "the buyer, confirmed. Please allow 20 mins for the buyer to arrive at your given address.",
+	// 	  });
+	// 	  console.log(docRef);
+		  
+	// 	  Alert.alert("Thank you. The seller notified for your confirmation!");
+	// 	  navigation.navigate("BuyerConfirmation",{
+			// itemId: itemId,
+			// itemName: itemName,
+			// itemDealPrice: itemDealPrice,
+			// sellerFirstname: itemFirstName,
+			// sellerLastname: itemLastName,
+			// itemAddress: itemAddress,
+			// minKg: minKg,
+			// itemSelectedImage: itemSelectedImage,
+	// 	  }).then(() => {
+	// 		deleteDoc(doc(db, "placeSell" doc.id))
+	// 	})
+	// 	.catch((error) => {
+	// 		Alert.alert(error.message);
+	// 	});
 		
-	  };
+	//   };
+
+	//for delete
+
+	// const deleteItem = async (id) => {
+	// 	await db.collection("posts").doc(id).delete();
+	// 	console.log("Deleted ", id);
+	//   };
 
 
 	return (
@@ -138,7 +157,7 @@ export default function Notification({ navigation, route }) {
 										icon="cart-arrow-down"
 										mode="contained"
 										color="#faac2a"
-										onPress={buyNow}
+										
 									>
 										Buy now
 									</Button>
