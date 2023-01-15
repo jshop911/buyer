@@ -74,7 +74,7 @@ export default function BuyerData() {
 									color={"#223447"}
 								/>
 								<Text
-									style={tw`text-xs text-gray-500 font-bold pl-2 w-35 h-12`}
+									style={tw`text-xs text-gray-500 font-bold pl-2 w-30 h-12`}
 								>
 									{item.location}
 								</Text>

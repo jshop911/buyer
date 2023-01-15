@@ -7,56 +7,92 @@ import {
 	FlatList,
 	TouchableOpacity,
 	Touchable,
+	Alert,
 } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import SellStatus from "../../assets/api/SellStatus";
 import { LogBox } from "react-native";
+import app, { db } from "../../config/firebase/Firebase";
+import { serverTimestamp } from "firebase/firestore";
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
+
+
 LogBox.ignoreLogs(["Firebase Analytics is not available in the Expo client"]);
 
 export default function BuyerConfirmation({ navigation, route }) {
+
 	const {
-		key,
-		itemId,
-		itemName,
-		itemSelectedImage,
+		id,
+		productName,
 		minKg,
+		sellerAddress,
+		sellDate,
+		sellerFirstName,
+		sellerLastName,
+		sellerUserID,
 		itemDealPrice,
-		itemUsername,
-		itemAddress,
-		itemProductDesc,
-		listOfCategory,
-		itemFirstName,
-		itemLastName,
-		itemStatus,
-	  } = route?.params || {};
+		selectedProductImage
+	} = route?.params || {};
 
-	  
+	const [sellStatus, setSellStatus] = React.useState();
 
+
+	async function onBuyPress() {
+		let currentUserUID = app.auth().currentUser.uid;
+		const sendToTransactionHistory = {
+			id: uuidv4(),
+			userId: currentUserUID,
+			sellerUserID: sellerUserID,
+			productName: productName,
+			selectedProductImage: selectedProductImage || "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
+			itemDealPrice: itemDealPrice,
+			minKg: minKg,
+			sellerFirstName: sellerFirstName,
+			address: sellerAddress,
+			dateReceived: serverTimestamp(),
+			Status: "Done"
+		};
+		return await Promise.all([
+			db
+				.collection("TransactionHistory")
+				.doc()
+				.set(sendToTransactionHistory)
+				.then(async () => {
+					Alert.alert("Item received successfully!.");
+					await db.collection("DealItems").doc(id).delete();
+					setSellStatus(sellStatus.filter((sellStatus: { id: any; }) => sellStatus.id !== id));
+					navigation.navigate("TransactionHistory");
+				}).then(async () => {
+					await db.collection("DealItems").doc(id).delete();
+				})
+				
+		])
+		
+	}
 
 	return (
 		<>
 			<View style={tw`p-2`}>
 				{/* Items to be sold */}
 				<FlatList
-					data={SellStatus}
-					keyExtractor={(item) => itemId}
+					data={sellStatus}
+					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => (
 						<>
 							<View style={tw`my-2 py-2 bg-gray-200 rounded flex-row`}>
 								<View style={tw`p-2`}>
 									<Image
-										key={key}
 										style={tw`w-20 h-25 rounded px-2 border-solid border-2 border-gray-400`}
 										source={{
-										uri: itemSelectedImage || "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
+										uri: item.selectedProductImage || "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
 										}}
 									/>
 								</View>
 								<View style={tw`pt-2 w-35 border-r border-gray-300`}>
-									<Text style={tw`text-base font-bold`}>{itemName}</Text>
+									<Text style={tw`text-base font-bold`}>{item.productName}</Text>
 									<Text style={tw`text-[#223447] font-bold underline`}>
-										{itemFirstName} {itemLastName}
+										{item.sellerFirstName} {item.sellerLastName}
 
 									</Text>
 									<View style={tw`flex flex-row border-b border-gray-300 pb-2`}>
@@ -68,7 +104,7 @@ export default function BuyerConfirmation({ navigation, route }) {
 										<TouchableOpacity
 											onPress={() => navigation.navigate("MapLocation")}
 										>
-											<Text style={tw`text-xs w-30`}>{itemAddress}</Text>
+											<Text style={tw`text-xs w-30`}>{item.sellerAddress}</Text>
 										</TouchableOpacity>
 									</View>
 
@@ -86,14 +122,16 @@ export default function BuyerConfirmation({ navigation, route }) {
 										</Text>
 										<Text style={tw`text-sm text-gray-600 font-bold`}>
 											{" "}
-											{minKg * itemDealPrice} kg
+											{item.minKg * item.itemDealPrice}  kg
 										</Text>
 									</View>
 								</View>
 								{/* Buyers confirmation */}
 								<View style={tw`self-center p-2 w-25`}>
 									<Text style={tw`font-bold  text-center`}>Status:</Text>
-									<TouchableOpacity>
+									<TouchableOpacity
+										onPress={onBuyPress}
+									>
 										<Text
 											style={tw`text-sm text-center text-green-50 bg-green-500 p-2 rounded`}
 										>
@@ -107,7 +145,7 @@ export default function BuyerConfirmation({ navigation, route }) {
 											Loss
 										</Text>
 									</TouchableOpacity>
-									<Text style={tw`text-xs`}>{item.date}</Text>
+									<Text style={tw`text-xs`}>{item.dateDeal}</Text>
 								</View>
 							</View>
 						</>

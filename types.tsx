@@ -20,10 +20,21 @@ export type RootStackParamList = {
 	Root: NavigatorScreenParams<RootTabParamList> | undefined;
 	About: undefined;
 	NotFound: undefined;
-	Search: undefined;
+	Search:  | Partial<{
+		firstName: string;
+		lastName: string;
+		sellerId: string;
+		sellerPhoto: string;
+
+	}> | undefined;
 	EditProfile: undefined;
 	Profile: undefined;
-	MessagePage: undefined;
+	MessagePage: | Partial<{
+		firstName: string;
+		lastName: string;
+		sellerId: string;
+		sellerPhoto: string;
+	}> | undefined;
 	ListCategory: undefined;
 	Logout: undefined;
 	Login: undefined;
@@ -50,6 +61,7 @@ export type RootStackParamList = {
 		listOfCategory: string;
 		itemSelectedImage: string;
 		minKg: number;
+		sellDate: string;
 		itemDealPrice: number;
 		itemUsername: string;
 		itemAddress: string;
@@ -88,7 +100,8 @@ export type RootTabParamList = {
 		itemProductDesc: string;
 		itemFirstName: string;
 		itemLastName: string;
-        
+        dateSell: string;
+
 	}> | undefined;
 	MessageList: undefined;
 	Notification: undefined;

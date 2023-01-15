@@ -94,7 +94,7 @@ export default function PostItem({ navigation }) {
 									/>
 									<Text
 									
-										style={tw`text-xs text-gray-500 font-bold pl-2 w-35 h-12`}
+										style={tw`text-xs text-gray-500 font-bold pl-2 w-30 h-12`}
 									>
 										{item.address}
 									</Text>

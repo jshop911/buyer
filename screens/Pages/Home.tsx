@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef, useReducer } from "react";
+import * as React from 'react';
+import { useEffect, useState, useRef, useReducer } from "react";
 import { StatusBar } from "expo-status-bar";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import {
