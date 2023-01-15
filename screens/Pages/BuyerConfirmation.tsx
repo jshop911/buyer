@@ -35,6 +35,7 @@ export default function BuyerConfirmation({ navigation, route }) {
 
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true);
+  let currentUserUID = app.auth().currentUser.uid;
 
   useEffect(() => {
     getData();
@@ -51,33 +52,52 @@ export default function BuyerConfirmation({ navigation, route }) {
     });
   };
 
-  const onBuyPress = () => {
-    // id: uuidv4(),
-    //   userId: currentUserUID,
-    //   sellerUserID: sellerUserID,
-    //   productName: productName,
-    //   selectedProductImage: selectedProductImage || "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
-    //   itemDealPrice: itemDealPrice,
-    //   minKg: minKg,
-    //   sellerFirstName: sellerFirstName,
-    //   address: sellerAddress,
-    //   dateReceived: serverTimestamp(),
-    //   Status: "Done"
-    // };
-    // return await Promise.all([
-    //   db
-    //     .collection("TransactionHistory")
-    //     .doc()
-    //     .set(sendToTransactionHistory)
-    //     .then(async () => {
-    //       Alert.alert("Item received successfully!.");
-    //       await db.collection("DealItems").doc(id).delete();
-    //       setSellStatus(sellStatus.filter((sellStatus: { id: any; }) => sellStatus.id !== id));
-    //       navigation.navigate("TransactionHistory");
-    //     }).then(async () => {
-    //       await db.collection("DealItems").doc(id).delete();
-    //     })
-    // ])
+  const onBuyPress = async ({
+    minKg,
+    address,
+    dealPrice,
+    id,
+    itemDealPrice,
+    itemId,
+    productName,
+    selectedProductImage,
+    sellerFirstName,
+    sellerLastName,
+    sellerUserID,
+  }) => {
+    console.log(minKg);
+
+    const sendToTransactionHistory = {
+      id: uuidv4(),
+      userId: currentUserUID,
+      sellerUserID: sellerUserID,
+      productName: productName,
+      selectedProductImage:
+        selectedProductImage ||
+        "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
+      itemDealPrice: itemDealPrice,
+      minKg: minKg,
+      sellerFirstName: sellerFirstName,
+      address: address,
+      dateReceived: serverTimestamp(),
+      Status: "Done",
+    };
+
+    return await Promise.all([
+      db
+        .collection("TransactionHistory")
+        .doc()
+        .set(sendToTransactionHistory)
+        .then(async () => {
+          Alert.alert("Item received successfully!.");
+          await db.collection("DealItems").doc(id).delete();
+          setData(data.filter((data: { id: any }) => data.id !== id));
+          navigation.navigate("TransactionHistory");
+        })
+        .catch((err) => {
+          console.log(err);
+        }),
+    ]);
   };
   return (
     <>
@@ -137,7 +157,7 @@ export default function BuyerConfirmation({ navigation, route }) {
               {/* Buyers confirmation */}
               <View style={tw`self-center p-2 w-25`}>
                 <Text style={tw`font-bold  text-center`}>Status:</Text>
-                <TouchableOpacity onPress={onBuyPress}>
+                <TouchableOpacity onPress={() => onBuyPress(item)}>
                   <Text
                     style={tw`text-sm text-center text-green-50 bg-green-500 p-2 rounded`}
                   >
@@ -151,7 +171,7 @@ export default function BuyerConfirmation({ navigation, route }) {
                     Loss
                   </Text>
                 </TouchableOpacity>
-                <Text style={tw`text-xs`}>{item.dateDeal}</Text>
+                {/* <Text style={tw`text-xs`}>{item.dateDeal}</Text> */}
               </View>
             </View>
           )}
