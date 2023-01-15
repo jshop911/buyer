@@ -67,10 +67,10 @@ export default function Notification({ navigation, route }) {
 
   //for delete
 
-  // const deleteItem = async (id) => {
-  // 	await db.collection("posts").doc(id).delete();
-  // 	console.log("Deleted ", id);
-  //   };
+  const deleteItem = async (id) => {
+  	await db.collection("DealItem").doc(id).delete();
+  	console.log("Deleted ", id);
+    };
 
   return (
     <View style={tw`p-2`}>
@@ -169,7 +169,7 @@ export default function Notification({ navigation, route }) {
                       icon="cancel"
                       mode="contained"
                       color="red"
-                      onPress={() => console.log("Pressed")}
+                      onPress={deleteItem}
                     >
                       Cancel
                     </Button>

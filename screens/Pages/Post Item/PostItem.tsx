@@ -74,7 +74,7 @@ export default function PostItem({ navigation }) {
                 <Image
                   style={tw`w-35 h-35 rounded px-2 border-solid border-2 border-gray-400`}
                   source={{
-                    uri: item.selectedProductImage,
+                    uri: item.selectedProductImage || "https://static.thenounproject.com/png/504708-200.png",
                   }}
                 />
                 <Text style={tw`text-sm text-gray-700 text-center font-bold`}>

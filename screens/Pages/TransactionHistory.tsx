@@ -72,7 +72,7 @@ const TransactionHistory = () => {
                     source={{
                       uri:
                         item.itemSelectedImage ||
-                        "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
+                        "https://static.thenounproject.com/png/504708-200.png",
                     }}
                     style={tw`w-22 h-30 p-2 rounded`}
                   />
