@@ -16,6 +16,7 @@ LogBox.ignoreLogs(["Firebase Analytics is not available in the Expo client"]);
 
 export default function BuyerConfirmation({ navigation, route }) {
 	const {
+		key,
 		itemId,
 		itemName,
 		itemSelectedImage,
@@ -45,7 +46,8 @@ export default function BuyerConfirmation({ navigation, route }) {
 							<View style={tw`my-2 py-2 bg-gray-200 rounded flex-row`}>
 								<View style={tw`p-2`}>
 									<Image
-										style={tw`w-30 h-35 rounded px-2 border-solid border-2 border-gray-400`}
+										key={key}
+										style={tw`w-20 h-25 rounded px-2 border-solid border-2 border-gray-400`}
 										source={{
 										uri: itemSelectedImage || "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
 										}}

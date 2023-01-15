@@ -104,7 +104,7 @@ export default function Notification({ navigation, route }) {
 				>
 					<View style={tw`p-2 self-center`}>
 					<Image
-					style={tw`w-30 h-35 rounded px-2 border-solid border-2 border-gray-400`}
+					style={tw`w-20 h-25 rounded px-2 border-solid border-2 border-gray-400`}
 					source={{
 					  uri: item.itemSelectedImage || "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
 					}}
@@ -112,12 +112,12 @@ export default function Notification({ navigation, route }) {
 					</View>
 					<View>
 						{/* For sellers name and time */}
-						<View style={tw`flex-row pt-4`}>
-							<View style={tw`w-50`}>
+						<View style={tw`flex-row pt-4 self-center`}>
+							<View style={tw`w-40 self-center`}>
 								<Text style={tw`text-lg font-bold`}>{item.sellerFirstName}{item.sellerLastName}</Text>
 							</View>
 							<View>
-								<Text style={tw`text-xs text-gray-600`}>{item.sellDate.toDate().toDateString()}</Text>
+								<Text style={tw`text-xs text-gray-600 self-center `}>{item.sellDate.toDate().toDateString()}</Text>
 							</View>
 						</View>
 						{/* For sellers name and time end */}
@@ -133,7 +133,7 @@ export default function Notification({ navigation, route }) {
 									<TouchableOpacity
 										onPress={() => navigation.navigate("MapLocation")}
 									>
-										<Text style={tw`text-sm w-55`}>{item.sellerAddress}</Text>
+										<Text style={tw`text-sm w-50`}>{item.sellerAddress}</Text>
 									</TouchableOpacity>
 								</View>
 

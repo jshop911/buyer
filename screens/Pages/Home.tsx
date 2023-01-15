@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useReducer } from "react";
 import { StatusBar } from "expo-status-bar";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import {
@@ -25,6 +25,11 @@ import app, { db } from "../../config/firebase/Firebase";
 import CustomBtn from "../../components/CustomBtn";
 import { Picker } from "@react-native-picker/picker";
 import { LogBox } from "react-native";
+import { Item } from "react-native-paper/lib/typescript/components/List/List";
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
+
+
 LogBox.ignoreLogs(["Firebase Analytics is not available in the Expo client"]);
 
 export default function Home({ navigation }: RootTabScreenProps<"Home">) {
@@ -36,6 +41,7 @@ export default function Home({ navigation }: RootTabScreenProps<"Home">) {
 	const [address, setAddress] = useState("");
 	const [photoURL, setPhotoURL] = useState("");
 
+
 	//Upload item
 	const pickerRef = useRef();
 	const [listOfCategory, setListOfCategory] = useState("");
@@ -44,10 +50,15 @@ export default function Home({ navigation }: RootTabScreenProps<"Home">) {
 	const [productDesc, setProductDesc] = useState("");
 	const [dealPrice, setDealPrice] = useState("");
 	const [addItemToBuy, setAddItemToBuy] = useState(false);
-	const [uploading, setUploading] = useState(false);
-	const [transferred, setTransferred] = useState(0);
-	
 
+
+	// upload image
+	const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
+
+	
+	// modal FOR ADD ITEM
 	const uploadItemtoBuy = () => {
 		setAddItemToBuy(!addItemToBuy);
 	};
@@ -106,6 +117,8 @@ export default function Home({ navigation }: RootTabScreenProps<"Home">) {
 		}
 	};
 
+	const uid = (currentUserUID ?? [])[0];
+
 	async function postItem() {
 		let currentUserUID = app.auth().currentUser.uid;
 
@@ -121,6 +134,7 @@ export default function Home({ navigation }: RootTabScreenProps<"Home">) {
 			alert("Please input minimum kg.");
 		} else {
 			const addPostItem = {
+				id: uuidv4(),
 				userId: currentUserUID,
 				productName: productName,
 				productDesc: productDesc,
@@ -134,8 +148,7 @@ export default function Home({ navigation }: RootTabScreenProps<"Home">) {
 			};
 
 			return await Promise.all([
-				app
-					.firestore()
+				db
 					.collection("postedItem")
 					.doc()
 					.set(addPostItem)
@@ -144,6 +157,13 @@ export default function Home({ navigation }: RootTabScreenProps<"Home">) {
 						Alert.alert("Item successfully added.");
 						return null;
 					}),
+					setSelectedProductImage(null),
+					setAddress(""),
+					setListOfCategory(""),
+					setProductName(""),
+					setProductDesc(""),
+					setDealPrice(""),
+					setCount(0),
 					
 			]).catch((error) => {
 				Alert.alert(error.message);

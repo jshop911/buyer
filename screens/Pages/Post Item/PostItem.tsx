@@ -19,22 +19,35 @@ export default function PostItem({ navigation }) {
 
 
 	useEffect(() => {
-		getDisplayData()
-	}, [])
+		getDisplayData();
+	}, [data])
 
-	const getDisplayData =  () => {
-		const getDataFromFirebase = [];
-		const sub = db
-		.collection("postedItem")
-		.where("userId", "==", currentUserUID)
-		.onSnapshot((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
-				getDataFromFirebase.push({ ...doc.data(), id: doc.id, key: doc.id });
-			});
-			setData(getDataFromFirebase);
-			
-		});
-	};
+	const getDisplayData = () => {
+		// tama na to
+		db.collection("postedItem")
+			.where("userId", "==", currentUserUID)
+			.get()
+			.then((snapshot) => {
+				let myData = [];
+				
+				snapshot.forEach((doc) => {
+					const post = doc.data();
+					myData.push({
+						id: post.id,
+						productName: post.productName,
+						minKg: post.minKg,
+						address: post.address,
+						dealPrice: post.dealPrice,
+						selectedProductImage: post.selectedProductImage,
+					});
+				});
+				console.log(myData);
+				setData(myData);
+		  })
+		  .catch((error) => {
+			console.log("Error getting data: ", error);
+		  });
+	  };
 
 	return (
 		<View style={tw`mb-32`}>
@@ -46,16 +59,16 @@ export default function PostItem({ navigation }) {
 				</Text>
 			</View>
 
-			<View style={tw`flex items-center self-center py-4 mb-18`}>
+			<View style={tw`flex items-center self-center py-4 mb-26`}>
 				<FlatList
 					data={data}
-					keyExtractor={(item, index) => item.id}
+					keyExtractor={item => item.id}
 					numColumns={2}
 					renderItem={({ item}) => (
 						<View style={tw`flex-row p-2`}>
 							<View style={tw`bg-gray-200 p-2 w-40 rounded shadow-md`}>
 								<Image
-									key={item.key}
+									
 									style={tw`w-35 h-35 rounded px-2 border-solid border-2 border-gray-400`}
 									source={{
 										uri: item.selectedProductImage,
@@ -80,6 +93,7 @@ export default function PostItem({ navigation }) {
 										color={"#223447"}
 									/>
 									<Text
+									
 										style={tw`text-xs text-gray-500 font-bold pl-2 w-35 h-12`}
 									>
 										{item.address}

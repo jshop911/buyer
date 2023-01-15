@@ -44,6 +44,7 @@ export type RootStackParamList = {
 	  }>
 	| undefined;
 	BuyerConfirmation: | Partial<{
+		key: string;
 		itemId: number;
 		itemName: string;
 		listOfCategory: string;
@@ -74,7 +75,21 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
 	NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
-	Home: undefined;
+	Home: Partial<{
+		key: number;
+		itemId: number;
+		itemName: string;
+		listOfCategory: string;
+		itemSelectedImage: string;
+		minKg: number;
+		itemDealPrice: number;
+		itemUsername: string;
+		itemAddress: string;
+		itemProductDesc: string;
+		itemFirstName: string;
+		itemLastName: string;
+        
+	}> | undefined;
 	MessageList: undefined;
 	Notification: undefined;
 	Profile: undefined;
