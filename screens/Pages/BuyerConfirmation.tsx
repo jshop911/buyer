@@ -93,13 +93,8 @@ export default function BuyerConfirmation({ navigation, route }) {
         .set(sendToTransactionHistory)
         .then(async () => {
           Alert.alert("Item received successfully!.");
-<<<<<<< HEAD
           await db.collection("placeSell").doc(id).delete();
           setData(data.filter((data) => data.id !== id));
-=======
-          await db.collection("SellNow").doc(id).delete();
-          setData(data.filter((data: { id: any }) => data.id !== id));
->>>>>>> 6fa90122a80bc088161631a35baa88f1c6d2f6db
           navigation.navigate("TransactionHistory");
         })
         .catch((err) => {
