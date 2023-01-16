@@ -43,9 +43,9 @@ export default function BuyerConfirmation({ navigation, route }) {
 
   const getData = () => {
     const getDataFromDB = [];
-    const sub = db.collection("DealItems").onSnapshot((querySnapshot) => {
+    const sub = db.collection("placeSell").onSnapshot((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        getDataFromDB.push({ ...doc.data(), id: doc.id, key: doc.id });
+        getDataFromDB.push({ ...doc.data(), id: doc.id });
       });
       setData(getDataFromDB);
       setLoading(false);
@@ -54,7 +54,7 @@ export default function BuyerConfirmation({ navigation, route }) {
 
   const onBuyPress = async ({
     minKg,
-    address,
+    buyerAddress,
     dealPrice,
     id,
     itemDealPrice,
@@ -65,8 +65,6 @@ export default function BuyerConfirmation({ navigation, route }) {
     sellerLastName,
     sellerUserID,
   }) => {
-    console.log(minKg);
-
     const sendToTransactionHistory = {
       id: uuidv4(),
       userId: currentUserUID,
@@ -78,7 +76,7 @@ export default function BuyerConfirmation({ navigation, route }) {
       itemDealPrice: itemDealPrice,
       minKg: minKg,
       sellerFirstName: sellerFirstName,
-      address: address,
+      address: buyerAddress,
       dateReceived: serverTimestamp(),
       Status: "Done",
     };
@@ -90,8 +88,8 @@ export default function BuyerConfirmation({ navigation, route }) {
         .set(sendToTransactionHistory)
         .then(async () => {
           Alert.alert("Item received successfully!.");
-          await db.collection("DealItems").doc(id).delete();
-          setData(data.filter((data: { id: any }) => data.id !== id));
+          await db.collection("placeSell").doc(id).delete();
+          setData(data.filter((data) => data.id !== id));
           navigation.navigate("TransactionHistory");
         })
         .catch((err) => {
@@ -106,9 +104,14 @@ export default function BuyerConfirmation({ navigation, route }) {
         {/* Items to be sold */}
         <FlatList
           data={data}
-          keyExtractor={(item) => item.key}
-          renderItem={({ item }) => (
-            <View style={tw`my-2 py-2 bg-gray-200 rounded flex-row`}>
+          keyExtractor={(item, index) => {
+            return item.id;
+          }}
+          renderItem={({ item, index }) => (
+            <View
+              style={tw`my-2 py-2 bg-gray-200 rounded flex-row`}
+              key={index}
+            >
               <View style={tw`p-2`}>
                 <Image
                   style={tw`w-20 h-25 rounded px-2 border-solid border-2 border-gray-400`}
@@ -171,7 +174,9 @@ export default function BuyerConfirmation({ navigation, route }) {
                     Loss
                   </Text>
                 </TouchableOpacity>
-                {/* <Text style={tw`text-xs`}>{item.dateDeal}</Text> */}
+                {/* <Text style={tw`text-xs`}>
+                  {JSON.stringify(item.dateReceived)}
+                </Text> */}
               </View>
             </View>
           )}
