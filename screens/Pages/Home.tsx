@@ -253,7 +253,7 @@ export default function Home({ navigation }: RootTabScreenProps<"Home">) {
             <Picker.Item label="#Waste Foods" value="#Waste Foods" />
             <Picker.Item label="#Box" value="#Box" />
             <Picker.Item label="#Gorrugated Roof" value="#Gorrugated Roof" />
-            <Picker.Item label="#News Papers" value="#News Papers" />
+            <Picker.Item label="#Papers" value="Papers" />
             <Picker.Item label="#Gadgets" value="#Gadgets" />
             <Picker.Item label="#Others" value="#Others" />
           </Picker>

@@ -25,9 +25,15 @@ import {
   Timestamp,
 } from "firebase/firestore";
 
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
+
+
+
 export default function Notification({ navigation, route }) {
   // deal seller
   const [dealSeller, setDealSeller] = useState();
+  const [data, setData] = useState();
 
   useEffect(() => {
     getSellerDeal();
@@ -35,7 +41,7 @@ export default function Notification({ navigation, route }) {
 
   const getSellerDeal = () => {
     // tama na to
-    db.collection("DealItems")
+    db.collection("SellNow")
       .get()
       .then((snapshot) => {
         let myData = [];
@@ -48,7 +54,7 @@ export default function Notification({ navigation, route }) {
             minKg: post.minKg,
             sellerAddress: post.sellerAddress,
             itemDealPrice: post.itemDealPrice,
-            dateDeal: post.dateDeal,
+            dateSell: post.dateSell,
             sellerFirstName: post.sellerFirstName,
             sellerLastName: post.sellerLastName,
             sellerUserID: post.sellerUserID,
@@ -66,11 +72,7 @@ export default function Notification({ navigation, route }) {
   };
 
   //for delete
-
-  // const deleteItem = async (id) => {
-  // 	await db.collection("posts").doc(id).delete();
-  // 	console.log("Deleted ", id);
-  //   };
+  
 
   return (
     <View style={tw`p-2`}>
@@ -102,7 +104,7 @@ export default function Notification({ navigation, route }) {
                 </View>
                 <View>
                   <Text style={tw`text-xs text-gray-600 self-center `}>
-                    {item.dateDeal.toDate().toDateString()}
+                    {item.dateSell.toDate().toDateString()}
                   </Text>
                 </View>
               </View>
@@ -169,7 +171,7 @@ export default function Notification({ navigation, route }) {
                       icon="cancel"
                       mode="contained"
                       color="red"
-                      onPress={() => console.log("Pressed")}
+                     
                     >
                       Cancel
                     </Button>
