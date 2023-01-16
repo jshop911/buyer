@@ -5,6 +5,7 @@ import { db } from "../../config/firebase/Firebase";
 
 const TransactionHistory = () => {
   const [dealSeller, setDealSeller] = useState();
+  const [data, setData] = useState();
 
   useEffect(() => {
     getSellerDeal();
@@ -12,7 +13,7 @@ const TransactionHistory = () => {
 
   const getSellerDeal = () => {
     // tama na to
-    db.collection("BuyStatus")
+    db.collection("TransactionHistory")
       .get()
       .then((snapshot) => {
         const myData:

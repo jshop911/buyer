@@ -20,20 +20,21 @@ import { v4 as uuidv4 } from "uuid";
 LogBox.ignoreLogs(["Firebase Analytics is not available in the Expo client"]);
 
 export default function BuyerConfirmation({ navigation, route }) {
-  // const {
-  //   id,
-  //   productName,
-  //   minKg,
-  //   sellerAddress,
-  //   sellDate,
-  //   sellerFirstName,
-  //   sellerLastName,
-  //   sellerUserID,
-  //   itemDealPrice,
-  //   selectedProductImage,
-  // } = route?.params || {};
+  const {
+    id,
+    productName,
+    minKg,
+    sellerAddress,
+    sellDate,
+    sellerFirstName,
+    sellerLastName,
+    sellerUserID,
+    itemDealPrice,
+    selectedProductImage,
+  } = route?.params || {};
 
   const [data, setData] = useState();
+  const [deleteData, setDeleteData] = useState();
   const [loading, setLoading] = useState(true);
   let currentUserUID = app.auth().currentUser.uid;
 
@@ -43,7 +44,7 @@ export default function BuyerConfirmation({ navigation, route }) {
 
   const getData = () => {
     const getDataFromDB = [];
-    const sub = db.collection("DealItems").onSnapshot((querySnapshot) => {
+    const sub = db.collection("SellNow").onSnapshot((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         getDataFromDB.push({ ...doc.data(), id: doc.id, key: doc.id });
       });
@@ -90,7 +91,7 @@ export default function BuyerConfirmation({ navigation, route }) {
         .set(sendToTransactionHistory)
         .then(async () => {
           Alert.alert("Item received successfully!.");
-          await db.collection("DealItems").doc(id).delete();
+          await db.collection("SellNow").doc(id).delete();
           setData(data.filter((data: { id: any }) => data.id !== id));
           navigation.navigate("TransactionHistory");
         })
@@ -99,6 +100,57 @@ export default function BuyerConfirmation({ navigation, route }) {
         }),
     ]);
   };
+
+
+  const onDeletePress = async ({
+    minKg,
+    address,
+    dealPrice,
+    id,
+    itemDealPrice,
+    itemId,
+    productName,
+    selectedProductImage,
+    sellerFirstName,
+    sellerLastName,
+    sellerUserID,
+  }) => {
+    console.log(minKg);
+
+    const deleteItem = {
+      id: uuidv4(),
+      userId: currentUserUID,
+      sellerUserID: sellerUserID,
+      productName: productName,
+      selectedProductImage:
+        selectedProductImage ||
+        "https://i.pinimg.com/236x/4e/01/fd/4e01fdc0c233aa4090b13a2e49a7084d.jpg",
+      itemDealPrice: itemDealPrice,
+      minKg: minKg,
+      sellerFirstName: sellerFirstName,
+      address: address,
+      dateReceived: serverTimestamp(),
+      Status: "Done",
+    };
+
+    return await Promise.all([
+      db
+        .collection("TransactionHistory")
+        .doc()
+        .set(deleteItem)
+        .then(async () => {
+          Alert.alert("The buyer Loss!.");
+          await db.collection("SellNow").doc(id).delete();
+          setDeleteData(deleteData.filter((deleteData: { id: any }) => deleteData.id !== id));
+          navigation.navigate("TransactionHistory");
+        })
+        .catch((err) => {
+          console.log(err);
+        }),
+    ]);
+  };
+
+
   return (
     <>
       <View style={tw`p-2`}>
@@ -164,7 +216,10 @@ export default function BuyerConfirmation({ navigation, route }) {
                     Received
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => onDeletePress(item)}
+                  style={tw`text-sm text-center text-red-50 bg-red-500 p-2 rounded`}
+                >
                   <Text
                     style={tw`text-sm text-center text-red-50 bg-red-500 p-2 my-2 rounded`}
                   >
