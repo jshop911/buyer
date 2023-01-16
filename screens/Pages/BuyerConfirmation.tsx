@@ -44,11 +44,7 @@ export default function BuyerConfirmation({ navigation, route }) {
 
   const getData = () => {
     const getDataFromDB = [];
-<<<<<<< HEAD
     const sub = db.collection("placeSell").onSnapshot((querySnapshot) => {
-=======
-    const sub = db.collection("SellNow").onSnapshot((querySnapshot) => {
->>>>>>> 6fa90122a80bc088161631a35baa88f1c6d2f6db
       querySnapshot.forEach((doc) => {
         getDataFromDB.push({ ...doc.data(), id: doc.id });
       });
@@ -103,7 +99,6 @@ export default function BuyerConfirmation({ navigation, route }) {
     ]);
   };
 
-
   const onDeletePress = async ({
     minKg,
     address,
@@ -143,7 +138,9 @@ export default function BuyerConfirmation({ navigation, route }) {
         .then(async () => {
           Alert.alert("The buyer Loss!.");
           await db.collection("SellNow").doc(id).delete();
-          setDeleteData(deleteData.filter((deleteData: { id: any }) => deleteData.id !== id));
+          setDeleteData(
+            deleteData.filter((deleteData: { id: any }) => deleteData.id !== id)
+          );
           navigation.navigate("TransactionHistory");
         })
         .catch((err) => {
@@ -151,7 +148,6 @@ export default function BuyerConfirmation({ navigation, route }) {
         }),
     ]);
   };
-
 
   return (
     <>
